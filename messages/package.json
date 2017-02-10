@@ -1,0 +1,19 @@
+{
+  "name": "jarvis-the-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "botbuilder": "^3.4.2",
+    "botbuilder-azure": "0.0.1",
+    "dotenv": "^4.0.0"
+  },
+  "devDependencies": {
+    "restify": "^4.1.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "acknowledge",
+  "license": "ISC"
+}
