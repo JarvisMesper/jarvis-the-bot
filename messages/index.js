@@ -5,7 +5,6 @@ var Quagga = require('quagga').default;
 var Promise = require('bluebird');
 var request = require('request-promise').defaults({ encoding: null });
 var http = require('http')
-var restify = require('restify');
 
 
 var options = {
