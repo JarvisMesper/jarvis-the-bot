@@ -86,6 +86,8 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 ])
 .matches('About', (session, args) => {
     session.sendTyping();
+    console.log("Session last product was : ", session.userData.lastproduct);
+    session.send('Session\'s last product' + session.userData.lastproduct);
     session.send('Je suis Jarvis le nutritionniste. J\'ai été créé par Nathan, Jacky et Christian lors des Open Food Hackdays à l\'EPFL les 10 et 11 février 2017.');
     session.send('Plus d\'infos ici : https://github.com/JarvisMesper/jarvis-the-nutritionist');
 })
@@ -130,6 +132,8 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                                     console.log("last product was : ", session.userData.lastproduct);
 
 
+
+                                    session.userData.secondlastproduct = session.userData.lastproduct
                                     session.userData.lastproduct = result.codeResult.code.toString();
 
                                     options.path = "getbarcode/"+result.codeResult.code.toString();
