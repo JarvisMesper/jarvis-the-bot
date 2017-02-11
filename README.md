@@ -1,6 +1,6 @@
 # Jarvis the bot
 
-Hey, I'm Jarvis the bot. Here you'll find how to install and use me.
+Hey, I'm Jarvis the bot. Here you'll find how to install and use me. The bot is made to work with an API store in this repo : [https://github.com/JarvisMesper/jarvis-the-nutritionist](https://github.com/JarvisMesper/jarvis-the-nutritionist).
 
 
 ## Dependencies

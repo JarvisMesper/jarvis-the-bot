@@ -54,6 +54,36 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
     session.send('Salut, j\'espère que tout roule pour toi ! Je suis expert en nutrition, demande-moi des trucs ;-)');
     session.beginDialog('/tuto');
 })
+
+.matches('PhotoTask', (session, args) => {
+    session.send('Vous pouvez m\'envoyer une photo contenant le code-barre du produite, je vous donnerai des infos à son sujet.');
+})
+.matches('BarcodeTask', [
+    function (session) {
+        session.beginDialog('/info');
+    },
+    function (session, results) {
+
+        options.path = "getbarcode/"+session.userData.product.toString();
+        http.get(options, function(res) {
+          console.log("Got response: " + res.statusCode);
+
+          res.on("data", function(chunk) {
+            var obj = JSON.parse(chunk);
+            //var name = obj["name"];
+            session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+          });
+        }).on('error', function(e) {
+          console.log("Got error: " + e.message);
+        });
+    }
+])
+.matches('About', (session, args) => {
+    session.sendTyping();
+    session.send('Je suis Jarvis le nutritionniste. J\'ai été créé par Nathan, Jacky et Christian lors des Open Food Hackdays à l\'EPFL les 10 et 11 février 2017.');
+    session.send('Plus d\'infos ici : https://github.com/JarvisMesper/jarvis-the-nutritionist');
+})
+
 .onDefault((session) => {
     if (hasImageAttachment(session)) {
         session.send('You sent me a picture! good job for a retard');
@@ -240,11 +270,9 @@ bot.dialog('/tuto', [
                     .images([
                         builder.CardImage.create(session, "https://avatars3.githubusercontent.com/u/25685412?v=3&s=200")
                     ])
-                    .tap(builder.CardAction.openUrl(session, "https://en.wikipedia.org/wiki/Space_Needle"))
                     .buttons([
-                      builder.CardAction.imBack(session, "code bar", "Envoyer une photo de code bar"),
-                      builder.CardAction.imBack(session, "code bar", "Envoyer les chiffres d'un code bar"),
-                      builder.CardAction.imBack(session, "quit", "Quitter")
+                      builder.CardAction.imBack(session, "photo", "Envoyer une photo de code bar"),
+                      builder.CardAction.imBack(session, "code-barre", "Envoyer les chiffres d'un code bar"),
                     ])
             ]);
         session.endDialog(msg);
