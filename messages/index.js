@@ -190,6 +190,8 @@ intents.matches(/^image/i, [
 
           res.on("data", function(chunk) {
 
+            session.send("Je vous transmet un magnifique graphique sous peu!");
+
            
             var msg = new builder.Message(session)
             .addAttachment({
