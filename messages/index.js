@@ -8,8 +8,8 @@ var http = require('http')
 
 
 var options = {
-  host: "127.0.0.1",
-  port: 5000
+  host: 'jarvis-mespair-api.cloudapp.net',
+  port: 80
 };
 
 
