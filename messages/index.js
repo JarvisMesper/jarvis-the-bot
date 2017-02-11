@@ -107,14 +107,27 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                                     });
                                 } else {
                                     console.log("not detected");
-                                }
+
+                                    var reply = new builder.Message(session)
+                                        .text("Je ne suis pas capable de voir le code barre sur cette photo, essaye avec un autre photo ou tappe le code manuellement.");
+
+                                    session.send(reply);
+                                 }
                             });
 
                     
 
                 }).catch(function (err) {
                     console.log('Error downloading attachment:');
+
+                    var reply = new builder.Message(session)
+                        .text("Je suis un peu fatigué, réessaye plus tard s'il te plaît.");
+
+                    session.send(reply);
                 });
+        }
+        else {
+
         }
     }
     else {
@@ -146,19 +159,31 @@ intents.matches(/^info/i, [
 
 intents.matches(/^image/i, [
     function (session) {
-        session.beginDialog('/info');
+        session.beginDialog('/image');
     },
     function (session, results) {
 
-        options.path = "getimage";
+        console.log("Trying to get image");
+
+        options.path = "getimage/234";
         http.get(options, function(res) {
           console.log("Got response: " + res.statusCode);
 
           res.on("data", function(chunk) {
-            var obj = JSON.parse(chunk);
-            //var name = obj["name"];
-            session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+
+           
+            var msg = new builder.Message(session)
+            .addAttachment({
+                contentUrl:'data:image/png;base64,' +  chunk.toString('base64'),
+                contentType: 'image/png',
+                name: "essai.png"
+            });
+
+            session.send(msg);
+
           });
+            //session.send(res.toString('base64'));
+
         }).on('error', function(e) {
           console.log("Got error: " + e.message);
         });
@@ -169,6 +194,16 @@ intents.matches(/^image/i, [
 bot.dialog('/info', [
     function (session) {
         builder.Prompts.text(session, 'What\'s the id of the product?');
+    },
+    function (session, results) {
+        session.userData.product = results.response;
+        session.endDialog();
+    }
+]);
+
+bot.dialog('/image', [
+    function (session) {
+        builder.Prompts.text(session, 'Image?');
     },
     function (session, results) {
         session.userData.product = results.response;
