@@ -12,8 +12,6 @@ var options = {
   port: 80
 };
 
-
-
 var dotenv = require('dotenv');
 dotenv.load();
 
@@ -40,9 +38,6 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 /*
 .matches('<yourIntent>')... See details at http://docs.botframework.com/builder/node/guides/understanding-natural-language/
 */
-.matches('None', (session, args) => {
-    session.send('Hi! This is the None intent handler. You said: \'%s\'.', session.message.text);
-})
 .matches('GetProduct', (session, args) => {
     session.send('Des infos sur ce produit --> %s', args.entities[0].entity);
     console.log(args);
@@ -81,7 +76,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             //var name = obj["name"];
             
             if(obj.data.length > 0) {
-                session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+                session.send('Ok... Voici le résultat : ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
             }
             else {
                 session.send('Oh zut... Il semblerait que le produit ne soit pas référencé dans la base de donnée d\'openFood.ch');
@@ -173,8 +168,6 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                 function (response) {
 
                     console.log(response);
-                    
-                    
 
                     Quagga.decodeSingle({
                                 src: 'data:image/jpg;base64,' + response.toString('base64'),
@@ -238,7 +231,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 
         }
     } else {
-        session.send('Sorry, I did not understand \'%s\'.', session.message.text);
+        session.send('Désolé je ne comprends pas vraiment ce que vous voulez de moi. Essayez autre chose ;-)');
     }
 });
 
@@ -261,7 +254,7 @@ intents.matches(/^image/i, [
 
             console.log("Got response: " + res.statusCode);
 
-            session.send("Je vous transmet un magnifique graphique sous peu");
+            session.send("Je vous transmets un magnifique graphique sous peu");
 
            
 
@@ -342,7 +335,7 @@ intents.matches(/^comparaison/i, [
 
 bot.dialog('/info', [
     function (session) {
-        builder.Prompts.text(session, 'J\'ai besoin du numéro inscrit sur le code bar s\'il te plaît');
+        builder.Prompts.text(session, 'J\'ai besoin du numéro inscrit sur le code-barre s\'il te plaît');
     },
     function (session, results) {
         session.userData.product = results.response;
