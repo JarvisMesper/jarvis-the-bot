@@ -84,7 +84,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                 session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
             }
             else {
-                session.send('Oh zut... Il semblerait que le produit ne soit pas référencé dans la base de donnée d\'openData');
+                session.send('Oh zut... Il semblerait que le produit ne soit pas référencé dans la base de donnée d\'openFood.ch');
             }
           });
 
@@ -164,7 +164,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                                                 session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
                                             }
                                             else {
-                                                session.send('Oh zut... Il semblerait que le produit ne soit pas référencé dans la base de donnée d\'openData');
+                                                session.send('Oh zut... Il semblerait que le produit ne soit pas référencé dans la base de donnée d\'openFood.ch');
                                             }
                                         });
                                     }).on('error', function(e) {
