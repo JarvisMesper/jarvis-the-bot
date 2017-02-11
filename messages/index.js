@@ -113,13 +113,14 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             var body = '';
               res.on('data', function (chunk) {
                 body += chunk.toString('base64');
+                console.log("chunk: " + chunk);
               });
               res.on('end', function () {       
                 var msg = new builder.Message(session)
                 .addAttachment({
                     contentUrl:'data:image/jpg;base64,' + body,
                     contentType: 'image/png',
-                    name: "essai.png"
+                    name: "comparaison.png"
                 });
 
                 session.send(msg);    
@@ -257,6 +258,43 @@ intents.matches(/^image/i, [
                 });
 
                 session.send(msg);    
+              });
+
+               
+            
+
+        }).on('error', function(e) {
+          console.log("Got error: " + e.message);
+        });
+       
+    }
+]);
+
+intents.matches(/^contains/i, [
+    function (session) {
+     
+        console.log("Trying to get contains");
+
+        options.path = "product-contains/76168352-noisette";
+        http.get(options, function(res) {
+
+//            console.log(res.toString('base64'))
+
+
+            console.log("Got response: " + res.statusCode);
+
+            session.send("Je vous transmets un magnifique graphique sous peu");
+
+           
+
+            var body = '';
+              res.on('data', function (chunk) {
+                body += chunk;
+              });
+              res.on('end', function () {
+                console.log("Got response: " + body + "\n \n \n");
+                
+                session.send('Containings:' + body);
               });
 
                
