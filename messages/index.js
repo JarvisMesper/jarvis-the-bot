@@ -152,11 +152,11 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                   res.on('end', function () {
                     console.log("Got response: " + body + "\n \n \n");
                     if(body.data == true) {
-                        session.send('Ca contient du ' + nutrient);
+                        session.send('Oui, ça contient du ' + nutrient);
                     }
                     else {
 
-                        session.send('Ca contient pas de ' + nutrient);
+                        session.send('Non, ça ne contient pas de ' + nutrient);
                     }
                   });
 
