@@ -68,11 +68,17 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
         http.get(options, function(res) {
           console.log("Got response: " + res.statusCode);
 
-          res.on("data", function(chunk) {
-            var obj = JSON.parse(chunk);
+          var body = '';
+          res.on('data', function (chunk) {
+            body += chunk;
+          });
+          res.on('end', function () {
+             var obj = JSON.parse(body);
             //var name = obj["name"];
             session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
           });
+
+
         }).on('error', function(e) {
           console.log("Got error: " + e.message);
         });
@@ -121,17 +127,30 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                             }, function(result) {
                                 if(result.codeResult) {
                                     console.log("result", result.codeResult.code);
+                                    console.log("last product was : ", session.userData.lastproduct);
+
+
+                                    session.userData.lastproduct = result.codeResult.code.toString();
 
                                     options.path = "getbarcode/"+result.codeResult.code.toString();
                                     //options.path = "getbarcode/"+session.userData.product.toString();
+          
+
                                     http.get(options, function(res) {
                                       console.log("Got response: " + res.statusCode);
 
-                                      res.on("data", function(chunk) {
-                                        var obj = JSON.parse(chunk);
+
+                                    var body = '';
+                                      res.on('data', function (chunk) {
+                                        body += chunk;
+                                      });
+                                      res.on('end', function () {
+                                         var obj = JSON.parse(body);
                                         //var name = obj["name"];
                                         session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
                                       });
+
+                                      
                                     }).on('error', function(e) {
                                       console.log("Got error: " + e.message);
                                     });
@@ -175,11 +194,16 @@ intents.matches(/^info/i, [
         http.get(options, function(res) {
           console.log("Got response: " + res.statusCode);
 
-          res.on("data", function(chunk) {
-            var obj = JSON.parse(chunk);
-            //var name = obj["name"];
-            session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
-          });
+          var body = '';
+          res.on('data', function (chunk) {
+                body += chunk;
+              });
+              res.on('end', function () {
+                 var obj = JSON.parse(body);
+                //var name = obj["name"];
+                session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);  
+              });
+
         }).on('error', function(e) {
           console.log("Got error: " + e.message);
         });
