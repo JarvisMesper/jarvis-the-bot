@@ -38,13 +38,6 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 /*
 .matches('<yourIntent>')... See details at http://docs.botframework.com/builder/node/guides/understanding-natural-language/
 */
-.matches('GetProduct', (session, args) => {
-    session.send('Des infos sur ce produit --> %s', args.entities[0].entity);
-    console.log(args);
-})
-.matches('GetIngredient', (session, args) => {
-    session.send('Des infos sur les ingrédients, ok ok --> \'%s\'', args);
-})
 .matches('Greetings', (session, args) => {
     session.send('Salut, j\'espère que tout roule pour toi ! Je suis expert en nutrition, demande-moi des trucs ;-)');
     session.beginDialog('/tuto');
@@ -135,6 +128,49 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
     session.send('Je suis Jarvis le nutritionniste. J\'ai été créé par Nathan, Jacky et Christian lors des Open Food Hackdays à l\'EPFL les 10 et 11 février 2017.');
     session.send('Plus d\'infos ici : https://github.com/JarvisMesper/jarvis-the-nutritionist');
 })
+.matches('Contains', [
+    function (session, args) {
+
+         if (args.entities.length == 1) {
+            nutrient = args.entities[0].entity;
+            console.log("Trying to get contains");
+
+            options.path = "product-contains/" + session.userData.lastproduct + "-" + nutrient;
+            http.get(options, function(res) {
+
+    //            console.log(res.toString('base64'))
+
+
+                console.log("Got response: " + res.statusCode);
+
+                session.send("Je vous transmets un magnifique graphique sous peu");
+
+               
+
+                var body = '';
+                  res.on('data', function (chunk) {
+                    body += chunk;
+                  });
+                  res.on('end', function () {
+                    console.log("Got response: " + body + "\n \n \n");
+                    
+                    session.send('Containings:' + body);
+                  });
+
+                   
+                
+
+            }).on('error', function(e) {
+              console.log("Got error: " + e.message);
+            });
+        } else {
+
+        } 
+     
+        
+       
+    }
+])
 
 .onDefault((session) => {
     if (hasImageAttachment(session)) {
@@ -219,42 +255,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 });
 
 
-intents.matches(/^contains/i, [
-    function (session) {
-     
-        console.log("Trying to get contains");
 
-        options.path = "product-contains/76168352-noisette";
-        http.get(options, function(res) {
-
-//            console.log(res.toString('base64'))
-
-
-            console.log("Got response: " + res.statusCode);
-
-            session.send("Je vous transmets un magnifique graphique sous peu");
-
-           
-
-            var body = '';
-              res.on('data', function (chunk) {
-                body += chunk;
-              });
-              res.on('end', function () {
-                console.log("Got response: " + body + "\n \n \n");
-                
-                session.send('Containings:' + body);
-              });
-
-               
-            
-
-        }).on('error', function(e) {
-          console.log("Got error: " + e.message);
-        });
-       
-    }
-]);
 
 bot.dialog('/info', [
     function (session) {
