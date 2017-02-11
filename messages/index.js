@@ -197,6 +197,8 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 });
 
 
+
+
 intents.matches(/^image/i, [
     function (session) {
         session.beginDialog('/image');
@@ -206,6 +208,54 @@ intents.matches(/^image/i, [
         console.log("Trying to get image");
 
         options.path = "getimage/234";
+        http.get(options, function(res) {
+
+//            console.log(res.toString('base64'))
+
+
+            console.log("Got response: " + res.statusCode);
+
+            session.send("Je vous transmet un magnifique graphique sous peu");
+
+           
+
+            var body = '';
+              res.on('data', function (chunk) {
+                body += chunk.toString('base64');
+              });
+              res.on('end', function () {
+                console.log("Got response: " + body + "\n \n \n");
+       
+                var msg = new builder.Message(session)
+                .addAttachment({
+                    contentUrl:'data:image/jpg;base64,' + body,
+                    contentType: 'image/png',
+                    name: "essai.png"
+                });
+
+                session.send(msg);    
+              });
+
+               
+            
+
+        }).on('error', function(e) {
+          console.log("Got error: " + e.message);
+        });
+       
+    }
+]);
+
+
+intents.matches(/^comparaison/i, [
+    function (session) {
+        session.beginDialog('/comparaison');
+    },
+    function (session, results) {
+
+        console.log("Trying to get comparaison");
+
+        options.path = "comparaison/234";
         http.get(options, function(res) {
 
 //            console.log(res.toString('base64'))
@@ -257,6 +307,16 @@ bot.dialog('/info', [
 bot.dialog('/image', [
     function (session) {
         builder.Prompts.text(session, 'Image?');
+    },
+    function (session, results) {
+        session.userData.product = results.response;
+        session.endDialog();
+    }
+]);
+
+bot.dialog('/comparaison', [
+    function (session) {
+        builder.Prompts.text(session, 'comparaison?');
     },
     function (session, results) {
         session.userData.product = results.response;
