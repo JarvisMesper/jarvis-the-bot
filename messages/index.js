@@ -90,7 +90,6 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
     }
 ])
 .matches('Compare', (session, args) => {
-
     if (args.entities.length == 2) {
         session.userData.secondlastproduct = args.entities[0].entity;
         session.userData.lastproduct = args.entities[1].entity;
@@ -139,7 +138,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 
 .onDefault((session) => {
     if (hasImageAttachment(session)) {
-        session.send('J\'ai bien reçu l\'image, laiss moi le temps de l\'analyser...');
+        session.send('J\'ai bien reçu l\'image, laisse-moi juste le temps de l\'analyser...');
         session.sendTyping();
         var msg = session.message;
         if (msg.attachments.length) {
@@ -153,9 +152,6 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 
             fileDownload.then(
                 function (response) {
-
-                    console.log(response);
-
                     Quagga.decodeSingle({
                                 src: 'data:image/jpg;base64,' + response.toString('base64'),
                                 numOfWorkers: 0,  // Needs to be 0 when used within node
@@ -187,10 +183,10 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                                              var obj = JSON.parse(body);
                                             //var name = obj["name"];
                                             if(obj.data.length > 0) {
-                                                session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+                                                session.send('Ok... Il s\'agit de : ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
                                             }
                                             else {
-                                                session.send('Oh zut... Il semblerait que le produit ne soit pas référencé dans la base de donnée d\'openFood.ch');
+                                                session.send('Oh zut... Il semblerait que le produit ne soit pas référencé dans la base de données d\'OpenFood.ch');
                                             }
                                         });
                                     }).on('error', function(e) {
@@ -222,53 +218,6 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
     }
 });
 
-
-intents.matches(/^image/i, [
-    function (session) {
-        session.beginDialog('/image');
-    },
-    function (session, results) {
-
-        console.log("Trying to get image");
-
-        options.path = "getimage/234";
-        http.get(options, function(res) {
-
-//            console.log(res.toString('base64'))
-
-
-            console.log("Got response: " + res.statusCode);
-
-            session.send("Je vous transmets un magnifique graphique sous peu");
-
-           
-
-            var body = '';
-              res.on('data', function (chunk) {
-                body += chunk.toString('base64');
-              });
-              res.on('end', function () {
-                console.log("Got response: " + body + "\n \n \n");
-       
-                var msg = new builder.Message(session)
-                .addAttachment({
-                    contentUrl:'data:image/jpg;base64,' + body,
-                    contentType: 'image/png',
-                    name: "essai.png"
-                });
-
-                session.send(msg);    
-              });
-
-               
-            
-
-        }).on('error', function(e) {
-          console.log("Got error: " + e.message);
-        });
-       
-    }
-]);
 
 intents.matches(/^contains/i, [
     function (session) {
@@ -344,8 +293,8 @@ bot.dialog('/tuto', [
                         builder.CardImage.create(session, "https://avatars3.githubusercontent.com/u/25685412?v=3&s=200")
                     ])
                     .buttons([
-                      builder.CardAction.imBack(session, "photo", "Envoyer une photo de code bar"),
-                      builder.CardAction.imBack(session, "code-barre", "Envoyer les chiffres d'un code bar"),
+                        builder.CardAction.imBack(session, "photo", "Envoyer une photo de code bar"),
+                        builder.CardAction.imBack(session, "code-barre", "Envoyer les chiffres d'un code bar"),
                     ])
             ]);
         session.endDialog(msg);
