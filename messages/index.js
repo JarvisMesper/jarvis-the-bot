@@ -82,7 +82,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                                 src: 'data:image/jpg;base64,' + response.toString('base64'),
                                 numOfWorkers: 0,  // Needs to be 0 when used within node
                                 inputStream: {
-                                    size: 2000  // restrict input-size to be 800px in width (long-side)
+                                    size: 5000  // restrict input-size to be 800px in width (long-side)
                                 },
                                 decoder: {
                                     //readers: ["code_128_reader"] // List of active readers
