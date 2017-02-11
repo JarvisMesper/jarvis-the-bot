@@ -74,9 +74,11 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
         });
     }
 ])
-.matches('About', [
+.matches('About', (session, args) => {
+    session.sendTyping();
     session.send('Je suis Jarvis le nutritionniste. J\'ai été créé par Nathan, Jacky et Christian lors des Open Food Hackdays à l\'EPFL les 10 et 11 février 2017.');
-])
+    session.send('Plus d\'infos ici : https://github.com/JarvisMesper/jarvis-the-nutritionist');
+})
 .onDefault((session) => {
     if (hasImageAttachment(session)) {
         session.send('You sent me a picture! good job for a retard');
