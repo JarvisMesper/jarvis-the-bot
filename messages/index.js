@@ -95,13 +95,22 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
     }
 ])
 .matches('Compare', (session, args) => {
+
+    if (args.entities.length == 2) {
+        session.userData.secondlastproduct = args.entities[0].entity;
+        session.userData.lastproduct = args.entities[1].entity;
+    } else if (args.entities.length == 1) {
+        session.userData.secondlastproduct = session.userData.lastproduct;
+        session.userData.lastproduct = args.entities[0].entity;
+    } 
+
     if (session.userData.lastproduct == undefined || session.userData.secondlastproduct == undefined) {
         session.send('Il faut que vous scanniez ou entriez 2 produits, ensuite je pourrais les comparer !');
     } else {
         session.send('Je compare volontiers ' + session.userData.secondlastproduct + ' avec ' + session.userData.lastproduct);
     }
 
-    // TODO jacky : with arguments !
+    // TODO : call the api
 })
 .matches('About', (session, args) => {
     session.sendTyping();
