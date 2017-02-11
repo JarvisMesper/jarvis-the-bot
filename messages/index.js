@@ -79,7 +79,13 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
           res.on('end', function () {
              var obj = JSON.parse(body);
             //var name = obj["name"];
-            session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+            
+            if(obj.data.length > 0) {
+                session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+            }
+            else {
+                session.send('Oh zut... Il semblerait que le produit ne soit pas référencé dans la base de donnée d\'openFood.ch');
+            }
           });
 
 
@@ -114,7 +120,8 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 
 .onDefault((session) => {
     if (hasImageAttachment(session)) {
-        session.send('You sent me a picture! good job for a retard');
+        session.send('J\'ai bien reçu l\'image, laiss moi le temps de l\'analyser...');
+        session.sendTyping();
         var msg = session.message;
         if (msg.attachments.length) {
 
@@ -129,11 +136,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                 function (response) {
 
                     console.log(response);
-                    // Send reply with attachment type & size
-                    var reply = new builder.Message(session)
-                        .text('Attachment of %s type and size of %s bytes received.', attachment.contentType, response.length);
-
-                    session.send(reply);
+                    
                     
 
                     Quagga.decodeSingle({
@@ -166,7 +169,12 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                                         res.on('end', function () {
                                              var obj = JSON.parse(body);
                                             //var name = obj["name"];
-                                            session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+                                            if(obj.data.length > 0) {
+                                                session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+                                            }
+                                            else {
+                                                session.send('Oh zut... Il semblerait que le produit ne soit pas référencé dans la base de donnée d\'openFood.ch');
+                                            }
                                         });
                                     }).on('error', function(e) {
                                       console.log("Got error: " + e.message);
@@ -197,33 +205,6 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
     }
 });
 
-intents.matches(/^info/i, [
-    function (session) {
-        session.beginDialog('/info');
-    },
-    function (session, results) {
-
-        options.path = "getbarcode/" + session.userData.product.toString();
-        
-        http.get(options, function(res) {
-          console.log("Got response: " + res.statusCode);
-
-          var body = '';
-          res.on('data', function (chunk) {
-                body += chunk;
-              });
-              res.on('end', function () {
-                 var obj = JSON.parse(body);
-                //var name = obj["name"];
-                session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);  
-              });
-
-        }).on('error', function(e) {
-          console.log("Got error: " + e.message);
-        });
-       
-    }
-]);
 
 intents.matches(/^image/i, [
     function (session) {
@@ -274,7 +255,7 @@ intents.matches(/^image/i, [
 
 bot.dialog('/info', [
     function (session) {
-        builder.Prompts.text(session, 'What\'s the id of the product?');
+        builder.Prompts.text(session, 'J\'ai besoin du numéro inscrit sur le code bar s\'il te plaît');
     },
     function (session, results) {
         session.userData.product = results.response;
