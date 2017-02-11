@@ -74,6 +74,9 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
         });
     }
 ])
+.matches('About', [
+    session.send('Je suis Jarvis le nutritionniste. J\'ai été créé par Nathan, Jacky et Christian lors des Open Food Hackdays à l\'EPFL les 10 et 11 février 2017.');
+])
 .onDefault((session) => {
     if (hasImageAttachment(session)) {
         session.send('You sent me a picture! good job for a retard');
@@ -248,11 +251,9 @@ bot.dialog('/tuto', [
                     .images([
                         builder.CardImage.create(session, "https://avatars3.githubusercontent.com/u/25685412?v=3&s=200")
                     ])
-                    .tap(builder.CardAction.openUrl(session, "https://en.wikipedia.org/wiki/Space_Needle"))
                     .buttons([
                       builder.CardAction.imBack(session, "photo", "Envoyer une photo de code bar"),
                       builder.CardAction.imBack(session, "code-barre", "Envoyer les chiffres d'un code bar"),
-                      builder.CardAction.imBack(session, "quit", "Quitter")
                     ])
             ]);
         session.endDialog(msg);
