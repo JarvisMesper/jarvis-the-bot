@@ -97,7 +97,9 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                                       console.log("Got response: " + res.statusCode);
 
                                       res.on("data", function(chunk) {
-                                        session.send('Ok... Here\'s the result: ' + chunk);
+                                        var obj = JSON.parse(chunk);
+                                        //var name = obj["name"];
+                                        session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
                                       });
                                     }).on('error', function(e) {
                                       console.log("Got error: " + e.message);
@@ -132,7 +134,31 @@ intents.matches(/^info/i, [
           console.log("Got response: " + res.statusCode);
 
           res.on("data", function(chunk) {
-            session.send('Ok... Here\'s the result: ' + chunk);
+            var obj = JSON.parse(chunk);
+            //var name = obj["name"];
+            session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+          });
+        }).on('error', function(e) {
+          console.log("Got error: " + e.message);
+        });
+       
+    }
+]);
+
+intents.matches(/^image/i, [
+    function (session) {
+        session.beginDialog('/info');
+    },
+    function (session, results) {
+
+        options.path = "getimage";
+        http.get(options, function(res) {
+          console.log("Got response: " + res.statusCode);
+
+          res.on("data", function(chunk) {
+            var obj = JSON.parse(chunk);
+            //var name = obj["name"];
+            session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
           });
         }).on('error', function(e) {
           console.log("Got error: " + e.message);
