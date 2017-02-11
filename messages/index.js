@@ -110,7 +110,44 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
         session.send('Je compare volontiers ' + session.userData.secondlastproduct + ' avec ' + session.userData.lastproduct);
     }
 
-    // TODO : call the api
+        console.log("Trying to get comparaison");
+
+        options.path = "comparaison/234";
+        http.get(options, function(res) {
+
+//            console.log(res.toString('base64'))
+
+
+            console.log("Got response: " + res.statusCode);
+
+            session.send("Je vous transmet un magnifique graphique sous peu");
+
+           
+
+            var body = '';
+              res.on('data', function (chunk) {
+                body += chunk.toString('base64');
+              });
+              res.on('end', function () {
+                console.log("Got response: " + body + "\n \n \n");
+       
+                var msg = new builder.Message(session)
+                .addAttachment({
+                    contentUrl:'data:image/jpg;base64,' + body,
+                    contentType: 'image/png',
+                    name: "essai.png"
+                });
+
+                session.send(msg);    
+              });
+
+               
+            
+
+        }).on('error', function(e) {
+          console.log("Got error: " + e.message);
+        });
+
 })
 .matches('About', (session, args) => {
     session.sendTyping();
