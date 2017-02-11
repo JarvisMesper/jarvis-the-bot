@@ -79,7 +79,13 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
           res.on('end', function () {
              var obj = JSON.parse(body);
             //var name = obj["name"];
-            session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+            
+            if(obj.length > 0) {
+                session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+            }
+            else {
+                session.send('Oh zut... Il semblerait que le produit ne soit pas référencé dans la base de donnée d\'openData');
+            }
           });
 
 
@@ -157,7 +163,12 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                                         res.on('end', function () {
                                              var obj = JSON.parse(body);
                                             //var name = obj["name"];
-                                            session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+                                            if(obj.length > 0) {
+                                                session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+                                            }
+                                            else {
+                                                session.send('Oh zut... Il semblerait que le produit ne soit pas référencé dans la base de donnée d\'openData');
+                                            }
                                         });
                                     }).on('error', function(e) {
                                       console.log("Got error: " + e.message);
@@ -206,7 +217,12 @@ intents.matches(/^info/i, [
               res.on('end', function () {
                  var obj = JSON.parse(body);
                 //var name = obj["name"];
-                session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);  
+                if(obj.length > 0) {
+                    session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+                }
+                else {
+                    session.send('Oh zut... Il semblerait que le produit ne soit pas référencé dans la base de donnée d\'openData');
+                }
               });
 
         }).on('error', function(e) {
