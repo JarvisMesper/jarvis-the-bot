@@ -65,6 +65,10 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
     function (session, results) {
 
         options.path = "getbarcode/"+session.userData.product.toString();
+        
+        session.userData.secondlastproduct = session.userData.lastproduct;
+        session.userData.lastproduct = session.userData.product.toString();
+
         http.get(options, function(res) {
           console.log("Got response: " + res.statusCode);
 
@@ -84,10 +88,17 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
         });
     }
 ])
+.matches('Compare', (session, args) => {
+    if (session.userData.lastproduct == undefined || session.userData.secondlastproduct == undefined) {
+        session.send('Il faut que vous scanniez ou entriez 2 produits, ensuite je pourrais les comparer !');
+    } else {
+        session.send('Je compare volontiers ' + session.userData.secondlastproduct + ' avec ' + session.userData.lastproduct);
+    }
+
+    // TODO jacky : with arguments !
+})
 .matches('About', (session, args) => {
     session.sendTyping();
-    console.log("Session last product was : ", session.userData.lastproduct);
-    session.send('Session\'s last product' + session.userData.lastproduct);
     session.send('Je suis Jarvis le nutritionniste. J\'ai été créé par Nathan, Jacky et Christian lors des Open Food Hackdays à l\'EPFL les 10 et 11 février 2017.');
     session.send('Plus d\'infos ici : https://github.com/JarvisMesper/jarvis-the-nutritionist');
 })
@@ -107,7 +118,6 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 
             fileDownload.then(
                 function (response) {
-
 
                     console.log(response);
                     // Send reply with attachment type & size
@@ -131,30 +141,24 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                                     console.log("result", result.codeResult.code);
                                     console.log("last product was : ", session.userData.lastproduct);
 
-
-
-                                    session.userData.secondlastproduct = session.userData.lastproduct
+                                    session.userData.secondlastproduct = session.userData.lastproduct;
                                     session.userData.lastproduct = result.codeResult.code.toString();
 
                                     options.path = "getbarcode/"+result.codeResult.code.toString();
                                     //options.path = "getbarcode/"+session.userData.product.toString();
-          
 
                                     http.get(options, function(res) {
-                                      console.log("Got response: " + res.statusCode);
+                                        console.log("Got response: " + res.statusCode);
 
-
-                                    var body = '';
-                                      res.on('data', function (chunk) {
-                                        body += chunk;
-                                      });
-                                      res.on('end', function () {
-                                         var obj = JSON.parse(body);
-                                        //var name = obj["name"];
-                                        session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
-                                      });
-
-                                      
+                                        var body = '';
+                                        res.on('data', function (chunk) {
+                                            body += chunk;
+                                        });
+                                        res.on('end', function () {
+                                             var obj = JSON.parse(body);
+                                            //var name = obj["name"];
+                                            session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
+                                        });
                                     }).on('error', function(e) {
                                       console.log("Got error: " + e.message);
                                     });
@@ -168,8 +172,6 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                                  }
                             });
 
-                    
-
                 }).catch(function (err) {
                     console.log('Error downloading attachment:');
 
@@ -178,13 +180,11 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 
                     session.send(reply);
                 });
-        }
-        else {
+        } else {
 
         }
-    }
-    else {
-      session.send('Sorry, I did not understand \'%s\'.', session.message.text);
+    } else {
+        session.send('Sorry, I did not understand \'%s\'.', session.message.text);
     }
 });
 
@@ -194,7 +194,8 @@ intents.matches(/^info/i, [
     },
     function (session, results) {
 
-        options.path = "getbarcode/"+session.userData.product.toString();
+        options.path = "getbarcode/" + session.userData.product.toString();
+        
         http.get(options, function(res) {
           console.log("Got response: " + res.statusCode);
 
