@@ -132,8 +132,8 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
     function (session, args) {
 
          if (args.entities.length == 1) {
-            nutrient = args.entities[0].entity;
-            console.log("Trying to get contains");
+            var nutrient = args.entities[0].entity;
+            console.log("Trying to get contains" + nutrient);
 
             options.path = "product-contains/" + session.userData.lastproduct + "-" + nutrient;
             http.get(options, function(res) {
@@ -143,8 +143,6 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 
                 console.log("Got response: " + res.statusCode);
 
-                session.send("Je vous transmets un magnifique graphique sous peu");
-
                
 
                 var body = '';
@@ -153,8 +151,13 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                   });
                   res.on('end', function () {
                     console.log("Got response: " + body + "\n \n \n");
-                    
-                    session.send('Containings:' + body);
+                    if(body.data == true) {
+                        session.send('Ca contient du ' + nutrient);
+                    }
+                    else {
+
+                        session.send('Ca contient pas de ' + nutrient);
+                    }
                   });
 
                    
