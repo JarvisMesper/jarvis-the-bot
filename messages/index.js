@@ -102,30 +102,19 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
     if (session.userData.lastproduct == undefined || session.userData.secondlastproduct == undefined) {
         session.send('Il faut que vous scanniez ou entriez 2 produits, ensuite je pourrais les comparer !');
     } else {
-        session.send('Je compare volontiers ' + session.userData.secondlastproduct + ' avec ' + session.userData.lastproduct);
-    }
+        session.send('Je compare volontiers les produits avec les code-barres ' + session.userData.secondlastproduct + ' et ' + session.userData.lastproduct + '. Voici un graphique comparatif :');
+        session.sendTyping();
 
-        console.log("Trying to get comparaison");
-
-        options.path = "comparaison/234";
+        options.path = 'comparaison/' + session.userData.secondlastproduct + '-' + session.userData.lastproduct;
         http.get(options, function(res) {
 
-//            console.log(res.toString('base64'))
-
-
             console.log("Got response: " + res.statusCode);
-
-            session.send("Je vous transmet un magnifique graphique sous peu");
-
-           
 
             var body = '';
               res.on('data', function (chunk) {
                 body += chunk.toString('base64');
               });
-              res.on('end', function () {
-                console.log("Got response: " + body + "\n \n \n");
-       
+              res.on('end', function () {       
                 var msg = new builder.Message(session)
                 .addAttachment({
                     contentUrl:'data:image/jpg;base64,' + body,
@@ -135,14 +124,11 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 
                 session.send(msg);    
               });
-
-               
-            
-
         }).on('error', function(e) {
           console.log("Got error: " + e.message);
+          session.send('Oh, il y a eu une erreur, il faudrait ré-essayer');
         });
-
+    }
 })
 .matches('About', (session, args) => {
     session.sendTyping();
@@ -236,8 +222,6 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 });
 
 
-
-
 intents.matches(/^image/i, [
     function (session) {
         session.beginDialog('/image');
@@ -285,54 +269,6 @@ intents.matches(/^image/i, [
     }
 ]);
 
-
-intents.matches(/^comparaison/i, [
-    function (session) {
-        session.beginDialog('/comparaison');
-    },
-    function (session, results) {
-
-        console.log("Trying to get comparaison");
-
-        options.path = "comparaison/234";
-        http.get(options, function(res) {
-
-//            console.log(res.toString('base64'))
-
-
-            console.log("Got response: " + res.statusCode);
-
-            session.send("Je vous transmet un magnifique graphique sous peu");
-
-           
-
-            var body = '';
-              res.on('data', function (chunk) {
-                body += chunk.toString('base64');
-              });
-              res.on('end', function () {
-                console.log("Got response: " + body + "\n \n \n");
-       
-                var msg = new builder.Message(session)
-                .addAttachment({
-                    contentUrl:'data:image/jpg;base64,' + body,
-                    contentType: 'image/png',
-                    name: "essai.png"
-                });
-
-                session.send(msg);    
-              });
-
-               
-            
-
-        }).on('error', function(e) {
-          console.log("Got error: " + e.message);
-        });
-       
-    }
-]);
-
 bot.dialog('/info', [
     function (session) {
         builder.Prompts.text(session, 'J\'ai besoin du numéro inscrit sur le code-barre s\'il te plaît');
@@ -346,16 +282,6 @@ bot.dialog('/info', [
 bot.dialog('/image', [
     function (session) {
         builder.Prompts.text(session, 'Image?');
-    },
-    function (session, results) {
-        session.userData.product = results.response;
-        session.endDialog();
-    }
-]);
-
-bot.dialog('/comparaison', [
-    function (session) {
-        builder.Prompts.text(session, 'comparaison?');
     },
     function (session, results) {
         session.userData.product = results.response;
