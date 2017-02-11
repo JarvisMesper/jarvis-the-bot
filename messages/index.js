@@ -44,16 +44,17 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
     session.send('Hi! This is the None intent handler. You said: \'%s\'.', session.message.text);
 })
 .matches('GetProduct', (session, args) => {
-    session.send('Seems you want to get a product --> %s', args.entities[0].entity);
+    session.send('Des infos sur ce produit --> %s', args.entities[0].entity);
     console.log(args);
 })
 .matches('GetIngredient', (session, args) => {
-    session.send('Now you want the ingredients, I see --> \'%s\'', args);
+    session.send('Des infos sur les ingrédients, ok ok --> \'%s\'', args);
 })
-
+.matches('Greetings', (session, args) => {
+    session.send('Salut, j\'espère que tout roule pour toi ! Je suis expert en nutrition, demande-moi des trucs ;-)');
+    session.beginDialog('/tuto');
+})
 .onDefault((session) => {
-
-
     if (hasImageAttachment(session)) {
         session.send('You sent me a picture! good job for a retard');
         var msg = session.message;
@@ -119,8 +120,6 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
     }
 });
 
-
-
 intents.matches(/^info/i, [
     function (session) {
         session.beginDialog('/info');
@@ -141,7 +140,6 @@ intents.matches(/^info/i, [
     }
 ]);
 
-
 bot.dialog('/info', [
     function (session) {
         builder.Prompts.text(session, 'What\'s the id of the product?');
@@ -152,8 +150,32 @@ bot.dialog('/info', [
     }
 ]);
 
-bot.dialog('/', intents);    
+bot.dialog('/', intents);  
 
+
+bot.dialog('/tuto', [
+    function (session) {
+        session.sendTyping();
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.xml)
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("Bienvenue")
+                    .subtitle("Tutoriel")
+                    .text("Je suis là pour vous aider, je suis nutritionniste après tout. Je suis intelligent, sympa et neutre, en plus je ne vous juge pas.")
+                    .images([
+                        builder.CardImage.create(session, "https://avatars3.githubusercontent.com/u/25685412?v=3&s=200")
+                    ])
+                    .tap(builder.CardAction.openUrl(session, "https://en.wikipedia.org/wiki/Space_Needle"))
+                    .buttons([
+                      builder.CardAction.imBack(session, "code bar", "Envoyer une photo de code bar"),
+                      builder.CardAction.imBack(session, "code bar", "Envoyer les chiffres d'un code bar"),
+                      builder.CardAction.imBack(session, "quit", "Quitter")
+                    ])
+            ]);
+        session.endDialog(msg);
+    }
+]);  
 
 if (useEmulator) {
     var restify = require('restify');
@@ -168,7 +190,6 @@ if (useEmulator) {
 
 
 //UTILITIES
-
 const hasImageAttachment = session => {
     return session.message.attachments.length > 0 &&
         session.message.attachments[0].contentType.indexOf('image') !== -1;
