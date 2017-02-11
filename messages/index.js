@@ -6,10 +6,13 @@ var Promise = require('bluebird');
 var request = require('request-promise').defaults({ encoding: null });
 var http = require('http')
 
+
 var options = {
   host: 'jarvis-mesper-api.cloudapp.net',
   port: 80
 };
+
+
 
 var dotenv = require('dotenv');
 dotenv.load();
@@ -51,29 +54,6 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
     session.send('Salut, j\'espère que tout roule pour toi ! Je suis expert en nutrition, demande-moi des trucs ;-)');
     session.beginDialog('/tuto');
 })
-.matches('PhotoTask', (session, args) => {
-    session.send('Vous pouvez m\'envoyer une photo contenant le code-barre du produite, je vous donnerai des infos à son sujet.');
-})
-.matches('BarcodeTask', [
-    function (session) {
-        session.beginDialog('/info');
-    },
-    function (session, results) {
-
-        options.path = "getbarcode/"+session.userData.product.toString();
-        http.get(options, function(res) {
-          console.log("Got response: " + res.statusCode);
-
-          res.on("data", function(chunk) {
-            var obj = JSON.parse(chunk);
-            //var name = obj["name"];
-            session.send('Ok... Here\'s the result: ' + obj.data[0].name + "\n" + obj.data[0].images[0]);
-          });
-        }).on('error', function(e) {
-          console.log("Got error: " + e.message);
-        });
-    }
-])
 .onDefault((session) => {
     if (hasImageAttachment(session)) {
         session.send('You sent me a picture! good job for a retard');
@@ -173,6 +153,7 @@ intents.matches(/^info/i, [
         }).on('error', function(e) {
           console.log("Got error: " + e.message);
         });
+       
     }
 ]);
 
@@ -186,24 +167,35 @@ intents.matches(/^image/i, [
 
         options.path = "getimage/234";
         http.get(options, function(res) {
-          console.log("Got response: " + res.statusCode);
 
-          res.on("data", function(chunk) {
+//            console.log(res.toString('base64'))
 
-            session.send("Je vous transmet un magnifique graphique sous peu!");
+
+            console.log("Got response: " + res.statusCode);
+
+            session.send("Je vous transmet un magnifique graphique sous peu");
 
            
-            var msg = new builder.Message(session)
-            .addAttachment({
-                contentUrl:'data:image/png;base64,' +  chunk.toString('base64'),
-                contentType: 'image/png',
-                name: "essai.png"
-            });
 
-            session.send(msg);
+            var body = '';
+              res.on('data', function (chunk) {
+                body += chunk.toString('base64');
+              });
+              res.on('end', function () {
+                console.log("Got response: " + body + "\n \n \n");
+       
+                var msg = new builder.Message(session)
+                .addAttachment({
+                    contentUrl:'data:image/jpg;base64,' + body,
+                    contentType: 'image/png',
+                    name: "essai.png"
+                });
 
-          });
-            //session.send(res.toString('base64'));
+                session.send(msg);    
+              });
+
+               
+            
 
         }).on('error', function(e) {
           console.log("Got error: " + e.message);
@@ -214,7 +206,7 @@ intents.matches(/^image/i, [
 
 bot.dialog('/info', [
     function (session) {
-        builder.Prompts.text(session, 'Entrer les chiffres correspondant au code-barre, je vous donnerai des infos en rapport avec le produit.');
+        builder.Prompts.text(session, 'What\'s the id of the product?');
     },
     function (session, results) {
         session.userData.product = results.response;
@@ -250,8 +242,8 @@ bot.dialog('/tuto', [
                     ])
                     .tap(builder.CardAction.openUrl(session, "https://en.wikipedia.org/wiki/Space_Needle"))
                     .buttons([
-                      builder.CardAction.imBack(session, "photo", "Envoyer une photo de code bar"),
-                      builder.CardAction.imBack(session, "code-barre", "Envoyer les chiffres d'un code bar"),
+                      builder.CardAction.imBack(session, "code bar", "Envoyer une photo de code bar"),
+                      builder.CardAction.imBack(session, "code bar", "Envoyer les chiffres d'un code bar"),
                       builder.CardAction.imBack(session, "quit", "Quitter")
                     ])
             ]);
