@@ -293,8 +293,8 @@ bot.dialog('/tuto', [
                         builder.CardImage.create(session, "https://avatars3.githubusercontent.com/u/25685412?v=3&s=200")
                     ])
                     .buttons([
-                        builder.CardAction.imBack(session, "photo", "Envoyer une photo de code bar"),
-                        builder.CardAction.imBack(session, "code-barre", "Envoyer les chiffres d'un code bar"),
+                        builder.CardAction.imBack(session, "photo", "Photo"),
+                        builder.CardAction.imBack(session, "code-barre", "Code-barre"),
                     ])
             ]);
         session.endDialog(msg);
