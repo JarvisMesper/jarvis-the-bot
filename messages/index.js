@@ -85,7 +85,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                                 },
                                 decoder: {
                                     //readers: ["code_128_reader"] // List of active readers
-                                    readers: ["ean_reader"] // List of active readers
+                                    readers: ["ean_reader","ean_8_reader"] // List of active readers
                                 },
                             }, function(result) {
                                 if(result.codeResult) {
