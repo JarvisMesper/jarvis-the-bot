@@ -150,8 +150,9 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                     body += chunk;
                   });
                   res.on('end', function () {
-                    console.log("Got response: " + body + "\n \n \n");
-                    if(body.data == true) {
+                    var obj = JSON.parse(body);
+                    console.log("Got response: " + obj.data + "\n \n \n");
+                    if(obj.data == true) {
                         session.send('Oui, ça contient du ' + nutrient);
                     }
                     else {
