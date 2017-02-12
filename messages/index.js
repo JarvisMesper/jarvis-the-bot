@@ -44,7 +44,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
 })
 
 .matches('PhotoTask', (session, args) => {
-    session.send('Vous pouvez m\'envoyer une photo contenant le code-barre du produite, je vous donnerai des infos à son sujet.');
+    session.send('Vous pouvez m\'envoyer une photo contenant le code-barre du produit, je vous donnerai des infos à son sujet.');
 })
 .matches('BarcodeTask', [
     function (session) {
@@ -295,7 +295,8 @@ bot.dialog('/tuto', [
                     .subtitle("Tutoriel")
                     .text("Je suis là pour vous aider, je suis nutritionniste après tout. Je suis intelligent, sympa et neutre, en plus je ne vous juge pas.")
                     .images([
-                        builder.CardImage.create(session, "https://avatars3.githubusercontent.com/u/25685412?v=3&s=200")
+                        //builder.CardImage.create(session, "https://avatars3.githubusercontent.com/u/25685412?v=3&s=200")
+                        builder.CardImage.create(session, "https://raw.githubusercontent.com/JarvisMesper/jarvis-the-nutritionist/master/statics/bot-icon-squared-400.png")
                     ])
                     .buttons([
                         builder.CardAction.imBack(session, "photo", "Photo"),

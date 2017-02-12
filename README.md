@@ -1,6 +1,6 @@
 # Jarvis the bot
 
-Hey, I'm Jarvis the bot. Here you'll find how to install and use me. The bot is made to work with an API store in this repo : [https://github.com/JarvisMesper/jarvis-the-nutritionist](https://github.com/JarvisMesper/jarvis-the-nutritionist).
+Hey, I'm Jarvis the bot. Here you'll find how to install and use me. The bot is made to work with an API stored in this repo : [https://github.com/JarvisMesper/jarvis-the-nutritionist](https://github.com/JarvisMesper/jarvis-the-nutritionist).
 
 
 ## Dependencies
@@ -49,3 +49,5 @@ Run :
 NB : be sure that the var NODE_ENV var is `development`.
 
 For more details : [go to the getting started page](https://github.com/Microsoft/BotFramework-Emulator/wiki/Getting-Started).
+
+![jarvis the nutritionist icon](https://raw.githubusercontent.com/JarvisMesper/jarvis-the-nutritionist/master/statics/bot-icon-squared-400.png)
